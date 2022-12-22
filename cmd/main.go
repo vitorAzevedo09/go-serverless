@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws"
@@ -8,22 +9,21 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
 	"github.com/vitorAzevedo09/go-serverless/pkg/handlers"
-	"os"
 )
+
+var dynaClient dynamodbiface.DynamoDBAPI
 
 func main() {
 	region := os.Getenv("AWS_REGION")
 	aws_session, err := session.NewSession(&aws.Config{
 		Region: aws.String(region),
 	})
-
 	if err != nil {
 		return
 	}
 
 	dynaClient = dynamodb.New(aws_session)
 	lambda.Start(handler)
-
 }
 
 const tableName = "LambdaInGoUser"
@@ -41,5 +41,4 @@ func handler(req events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse
 	default:
 		return handlers.UnhandledMethod()
 	}
-
 }
